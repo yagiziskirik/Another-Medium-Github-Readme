@@ -129,7 +129,9 @@ module.exports = (req, res) => {
     .then(
       (response) => {
         console.log(response)
-        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
+        var response2 = `iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
+        //8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
+        var svgImage = createImage(title, pubDate, link, author, response2, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
 		    res.setHeader("Content-Type","image/svg+xml")
 		    res.status(200).send(svgImage)
       }
