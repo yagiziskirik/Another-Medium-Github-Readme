@@ -2,7 +2,7 @@ const request = require('request')
 import moment from 'moment';
 const imageToBase64 = require('image-to-base64')
 
-function createImage(title, pubDate, link, author, img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
+function createImage(title, pubDate, link, author, base64ImageLink, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
   var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
@@ -54,7 +54,7 @@ function createImage(title, pubDate, link, author, img, description, descLength,
           }
           a{
             text-decoration: none;
-            color: inherit
+            color: inherit;
           }
           p {
             line-height: 1.5;
@@ -67,7 +67,7 @@ function createImage(title, pubDate, link, author, img, description, descLength,
             color: #${dateColor};
             display: block;
             margin-top: 5px;
-            margin-bottom: 8px
+            margin-bottom: 8px;
           }
           h6{
               color: #${authorColor};
@@ -78,7 +78,7 @@ function createImage(title, pubDate, link, author, img, description, descLength,
         </style>
         <div class="outer-container flex">
           <a class="container flex" href="${link}" target="__blank">
-            <img style="border-radius: 7px;" src="data:image/png;base64,${img}/>
+            <img style="border-radius: 7px;" src="data:image/png;base64,${base64ImageLink}"/>
             <div class="right">
               <h3>${title}</h3>
               <small>${momentTime}</small>
@@ -129,9 +129,7 @@ module.exports = (req, res) => {
     .then(
       (response) => {
         console.log(response)
-        var response2 = `iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
-        //8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==`
-        var svgImage = createImage(title, pubDate, link, author, response2, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
+        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
 		    res.setHeader("Content-Type","image/svg+xml")
 		    res.status(200).send(svgImage)
       }
