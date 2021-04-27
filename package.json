@@ -9,6 +9,7 @@
   "author": "yagiziskirik",
   "license": "MIT",
   "dependencies": {
+    "image-to-base64": "^2.2.0",
     "moment": "^2.29.1",
     "request": "^2.88.2"
   }

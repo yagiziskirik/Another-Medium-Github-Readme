@@ -1,9 +1,8 @@
 const request = require('request')
 import moment from 'moment';
 
-function createImage(title, pubDate, link, author, thumbnail, description) {
-  var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,40) + '...'
-  console.log(shortDescription)
+function createImage(title, pubDate, link, author, thumbnail, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
+  var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
   <svg fill="none" width="800" height="135" xmlns="http://www.w3.org/2000/svg">
@@ -36,8 +35,8 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
             border: 1px solid rgba(255,255,255,.2);
             padding: 10px 20px;
             border-radius: 10px;
-            background: #151515;
-            background: linear-gradient(60deg, #151515 0%, #151515 47%, rgba(46,46,46,1) 50%, #151515 53%, #151515 100%);
+            background: #${bgColor};
+            background: linear-gradient(60deg, #${bgColor} 0%, #${bgColor} 47%, ${highlightConvertedColor} 50%, #${bgColor} 53%, #${bgColor} 100%);
             background-size: 600% 400%;
             animation: gradientBackground 3s ease infinite;
             overflow: hidden;
@@ -58,19 +57,19 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
           }
           p {
             line-height: 1.5;
-            color: #ebebeb
+            color: #${descColor}
           }
           h3{
-            color: #c09839
+            color: #${titleColor}
           }
           small{
-            color: #999999;
+            color: #${dateColor};
             display: block;
             margin-top: 5px;
             margin-bottom: 8px
           }
           h6{
-              color: #c09839;
+              color: #${authorColor};
               display: block;
               margin-top: 5px;
             }
@@ -78,7 +77,7 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
         </style>
         <div class="outer-container flex">
           <a class="container flex" href="${link}" target="__blank">
-            <img style="border-radius: 7px;" src="${thumbnail}"/>
+            <img style="border-radius: 7px;" src="data:image/png;base64,${thumbnail}/>
             <div class="right">
               <h3>${title}</h3>
               <small>${momentTime}</small>
@@ -93,9 +92,30 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
   return svgBase
 }
 
+function hexToRGBA(hex, alpha){
+  hex = (""+hex).trim().replace(/#/g,""); //trim and remove any leading # if there (supports number values as well)
+  if (!/^(?:[0-9a-fA-F]{3}){1,2}$/.test(hex)) throw ("not a valid hex string"); //Regex Validator
+  if (hex.length==3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]} //support short form
+  var b_int = parseInt(hex, 16);
+  return "rgba("+[
+      (b_int >> 16) & 255, //R
+      (b_int >> 8) & 255, //G
+      b_int & 255, //B
+      alpha || 1  //add alpha if is set
+  ].join(",")+")";
+}
+
 module.exports = (req, res) => {
-	const username = req.query.username || 'yagiziskirik'
+	const username = req.query.username || 'medium'
   const index = req.query.index || '0'
+  const descLength = req.query.descLength || '40'
+  const titleColor = req.query.highlightColor || 'c09839'
+  const authorColor = req.query.authorColor || 'c09839'
+  const descColor = req.query.authorColor || 'ebebeb'
+  const bgColor = req.query.bgColor || '151515'
+  const dateColor = req.query.dateColor || '999999'
+  const highlightColor = req.query.highlightColor || '2e2e2e'
+  const highlightConvertedColor = hexToRGBA(highlightColor)
 	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, (err, resp, body) => {
     if (err) { return console.log(err) }
     var title = body.items[index].title
@@ -104,8 +124,18 @@ module.exports = (req, res) => {
     var author = body.items[index].author
     var thumbnail = body.items[index].thumbnail
     var description = body.items[index].description
-    var svgImage = createImage(title, pubDate, link, author, thumbnail, description)
-		res.setHeader("Content-Type","image/svg+xml")
-		res.status(200).send(svgImage)
+    imageToBase64(thumbnail) // Image URL
+    .then(
+      (response) => {
+        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
+		    res.setHeader("Content-Type","image/svg+xml")
+		    res.status(200).send(svgImage)
+      }
+    )
+    .catch(
+      (error) => {
+        console.log(error)
+      }
+    )
 	})
 }
