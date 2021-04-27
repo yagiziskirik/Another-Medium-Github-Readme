@@ -3,8 +3,8 @@ import moment from 'moment';
 
 function createImage(title, pubDate, link, author, thumbnail, description) {
   //var shortDescription = description.substring(0,3) + '...'
-  var shortDescription = 'yes'
-  console.log(description)
+  var shortDescription = description.replace(/((&lt)|(<)(?:.|\n)*?(&gt)|(>))/gm, '').substr(0,40) + '...'
+  console.log(shortDescription)
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
   <svg fill="none" width="800" height="135" xmlns="http://www.w3.org/2000/svg">
