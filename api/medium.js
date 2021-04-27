@@ -58,10 +58,10 @@ function createImage(title, pubDate, link, author, img, description, descLength,
           }
           p {
             line-height: 1.5;
-            color: #${descColor}
+            color: #${descColor};
           }
           h3{
-            color: #${titleColor}
+            color: #${titleColor};
           }
           small{
             color: #${dateColor};
