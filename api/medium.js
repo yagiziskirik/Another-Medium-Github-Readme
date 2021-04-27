@@ -2,7 +2,7 @@ const request = require('request')
 import moment from 'moment';
 const imageToBase64 = require('image-to-base64')
 
-function createImage(title, pubDate, link, author, thumbnail, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
+function createImage(title, pubDate, link, author, img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
   var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
@@ -78,7 +78,7 @@ function createImage(title, pubDate, link, author, thumbnail, description, descL
         </style>
         <div class="outer-container flex">
           <a class="container flex" href="${link}" target="__blank">
-            <img style="border-radius: 7px;" src="data:image/png;base64,${thumbnail}/>
+            <img style="border-radius: 7px;" src="data:image/png;base64,${img}/>
             <div class="right">
               <h3>${title}</h3>
               <small>${momentTime}</small>
@@ -128,6 +128,7 @@ module.exports = (req, res) => {
     imageToBase64(thumbnail) // Image URL
     .then(
       (response) => {
+        console.log(response)
         var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
 		    res.setHeader("Content-Type","image/svg+xml")
 		    res.status(200).send(svgImage)
