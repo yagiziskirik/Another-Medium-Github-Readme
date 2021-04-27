@@ -2,8 +2,7 @@ const request = require('request')
 import moment from 'moment';
 
 function createImage(title, pubDate, link, author, thumbnail, description) {
-  //var shortDescription = description.substring(0,3) + '...'
-  var shortDescription = description.replace(/((&lt)|(<)(?:.|\n)*?(&gt)|(>))/gm, '').substr(0,40) + '...'
+  var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,40) + '...'
   console.log(shortDescription)
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
