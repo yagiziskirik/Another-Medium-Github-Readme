@@ -13,7 +13,7 @@ You can use this API like this:
 ![API](https://another-medium-github-readme.vercel.app/api/medium?index=INDEXOFARTICLE&username=YOURUSERNAME)
 ```
 
-As I mentioned before, you can customize it to your liking. To do that you can use the following queries:
+As I mentioned before, you can customize it to your liking. To do that, you can use the following queries:
 * username: Your username in Medium.com.
 * index: Index of the article.
 * descLength: How many characters should be shown in the description section.
@@ -26,5 +26,5 @@ As I mentioned before, you can customize it to your liking. To do that you can u
 
 This is the combination of the all:
 ```
-![API](https://another-medium-github-readme.vercel.app/api/medium?index=0&username=yagiziskirik&descLength=40&titleColor=c09839&authorColor=c09839&descColor=ebebeb&bgColor=yagiziskirik&bgColor=151515&dateColor=999999&highlightColor=2e2e2e)
+![API](https://another-medium-github-readme.vercel.app/api/medium?index=0&username=yagiziskirik&descLength=40&titleColor=c09839&authorColor=c09839&descColor=ebebeb&bgColor=151515&dateColor=999999&highlightColor=2e2e2e)
 ```
