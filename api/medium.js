@@ -2,9 +2,10 @@ const request = require('request')
 import moment from 'moment';
 
 function createImage(title, pubDate, link, author, thumbnail, description) {
-  var momentTime = moment(pubDate)
-  var shortDescription = description.substring(0,3) + '...'
-  var timeInStr = momentTime.fromNow()
+  //var shortDescription = description.substring(0,3) + '...'
+  var shortDescription = 'yes'
+  console.log(description)
+  var momentTime = moment(pubDate).fromNow()
   var svgBase = `
   <svg fill="none" width="800" height="135" xmlns="http://www.w3.org/2000/svg">
     <foreignObject width="100%" height="100%">
@@ -81,7 +82,7 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
             <img style="border-radius: 7px;" src="${thumbnail}"/>
             <div class="right">
               <h3>${title}</h3>
-              <small>${timeInStr}</small>
+              <small>${momentTime}</small>
               <p>${shortDescription}</p>
               <h6>by ${author}</h6>
             </div>
