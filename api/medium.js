@@ -1,5 +1,6 @@
 const request = require('request')
 import moment from 'moment';
+const imageToBase64 = require('image-to-base64')
 
 function createImage(title, pubDate, link, author, thumbnail, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
   var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
