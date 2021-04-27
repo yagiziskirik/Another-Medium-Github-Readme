@@ -1,0 +1,14 @@
+{
+  "name": "another-medium-github-readme",
+  "version": "1.0.0",
+  "description": "This is an API which fetches Medium articles and show them on Github page.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "author": "yagiziskirik",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
