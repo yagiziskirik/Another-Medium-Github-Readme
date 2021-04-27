@@ -1,6 +1,10 @@
 const request = require('request')
+import moment from 'moment';
 
 function createImage(title, pubDate, link, author, thumbnail, description) {
+  var momentTime = moment(pubDate)
+  var timeInStr = momentTime.fromNow()
+  var shortDescription = description.substring(0,50) + '...'
   var svgBase = `
   <svg fill="none" width="800" height="135" xmlns="http://www.w3.org/2000/svg">
     <foreignObject width="100%" height="100%">
@@ -77,8 +81,8 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
             <img style="border-radius: 7px;" src="${thumbnail}"/>
             <div class="right">
               <h3>${title}</h3>
-              <small>16 hours ago</small>
-              <p>Your roadmap when starting to programming...</p>
+              <small>${timeInStr}</small>
+              <p>${shortDescription}</p>
               <h6>by ${author}</h6>
             </div>
           </a>
@@ -91,14 +95,15 @@ function createImage(title, pubDate, link, author, thumbnail, description) {
 
 module.exports = (req, res) => {
 	const username = req.query.username || 'yagiziskirik'
+  const index = req.query.index || '0'
 	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, (err, resp, body) => {
     if (err) { return console.log(err) }
-    var title = body.items[1].title
-    var pubDate = body.items[1].pubDate
-    var link = body.items[1].link
-    var author = body.items[1].author
-    var thumbnail = body.items[1].thumbnail
-    var description = body.items[1].description
+    var title = body.items[index].title
+    var pubDate = body.items[index].pubDate
+    var link = body.items[index].link
+    var author = body.items[index].author
+    var thumbnail = body.items[index].thumbnail
+    var description = body.items[index].description
     var svgImage = createImage(title, pubDate, link, author, thumbnail, description)
 		res.setHeader("Content-Type","image/svg+xml")
 		res.status(200).send(svgImage)
