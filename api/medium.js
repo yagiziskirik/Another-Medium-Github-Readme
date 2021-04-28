@@ -2,7 +2,7 @@ const request = require('request')
 import moment from 'moment';
 const imageToBase64 = require('image-to-base64')
 
-function createImage(title, pubDate, link, author, base64ImageLink, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor) {
+function createImage(title, pubDate, link, author, base64ImageLink, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor) {
   var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
@@ -33,9 +33,9 @@ function createImage(title, pubDate, link, author, base64ImageLink, description,
           }
           .container{
             height: 133px;
-            border: 1px solid rgba(255,255,255,.2);
+            border: 1px solid #${borderColor};
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: ${borderRadius}px;
             background: #${bgColor};
             background: linear-gradient(60deg, #${bgColor} 0%, #${bgColor} 47%, ${highlightConvertedColor} 50%, #${bgColor} 53%, #${bgColor} 100%);
             background-size: 600% 400%;
@@ -110,6 +110,8 @@ module.exports = (req, res) => {
 	const username = req.query.username || 'medium'
   const index = req.query.index || '0'
   const descLength = req.query.descLength || '40'
+  const borderRadius = req.query.borderRadius || '10'
+  const borderColor = req.query.borderColor || 'ffffff'
   const titleColor = req.query.highlightColor || 'c09839'
   const authorColor = req.query.authorColor || 'c09839'
   const descColor = req.query.authorColor || 'ebebeb'
@@ -129,7 +131,7 @@ module.exports = (req, res) => {
     .then(
       (response) => {
         console.log(response)
-        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor)
+        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor)
 		    res.setHeader("Content-Type","image/svg+xml")
 		    res.status(200).send(svgImage)
       }
