@@ -25,8 +25,9 @@ As I mentioned before, you can customize it to your liking. To do that, you can 
 * bgColor: Color of the background in HEX.
 * dateColor: Color of the date in HEX.
 * highlightColor: Color of the highlight in HEX.
+* generalWidth: Width of the container in percent.
 
 This is the combination of the all:
 ```
-![API](https://another-medium-github-readme.vercel.app/api/medium?index=0&username=yagiziskirik&descLength=40&titleColor=c09839&authorColor=c09839&descColor=ebebeb&bgColor=151515&dateColor=999999&highlightColor=2e2e2e&borderRadius=10&borderColor=ffffff)
+![API](https://another-medium-github-readme.vercel.app/api/medium?index=0&username=yagiziskirik&descLength=40&titleColor=c09839&authorColor=c09839&descColor=ebebeb&bgColor=151515&dateColor=999999&highlightColor=2e2e2e&borderRadius=10&borderColor=ffffff&generalWidth=100)
 ```

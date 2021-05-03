@@ -2,11 +2,11 @@ const request = require('request')
 import moment from 'moment';
 const imageToBase64 = require('image-to-base64')
 
-function createImage(title, pubDate, link, author, base64ImageLink, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor) {
+function createImage(title, pubDate, link, author, base64ImageLink, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth) {
   var shortDescription = description.replace(/<\/?[^>]+(>|$)/g, '').replace('\n', ' ').substr(0,descLength) + '...'
   var momentTime = moment(pubDate).fromNow()
   var svgBase = `
-  <svg fill="none" width="800" height="135" xmlns="http://www.w3.org/2000/svg">
+  <svg fill="none" width="${generalWidth}%" height="135" xmlns="http://www.w3.org/2000/svg">
     <foreignObject width="100%" height="100%">
       <div xmlns="http://www.w3.org/1999/xhtml">
         <style>
@@ -118,6 +118,7 @@ module.exports = (req, res) => {
   const bgColor = req.query.bgColor || '151515'
   const dateColor = req.query.dateColor || '999999'
   const highlightColor = req.query.highlightColor || '2e2e2e'
+  const generalWidth = req.query.generalWidth || '100'
   const highlightConvertedColor = hexToRGBA(highlightColor)
 	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, (err, resp, body) => {
     if (err) { return console.log(err) }
@@ -131,7 +132,7 @@ module.exports = (req, res) => {
     .then(
       (response) => {
         console.log(response)
-        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor)
+        var svgImage = createImage(title, pubDate, link, author, response, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth)
 		    res.setHeader("Content-Type","image/svg+xml")
 		    res.status(200).send(svgImage)
       }
