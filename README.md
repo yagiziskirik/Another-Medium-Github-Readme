@@ -25,7 +25,7 @@ As I mentioned before, you can customize it to your liking. To do that, you can 
 * bgColor: Color of the background in HEX.
 * dateColor: Color of the date in HEX.
 * highlightColor: Color of the highlight in HEX.
-* generalWidth: Width of the container in percent.
+* generalWidth: Width of the container in pixels.
 
 This is the combination of the all:
 ```
