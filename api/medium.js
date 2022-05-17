@@ -120,7 +120,7 @@ module.exports = (req, res) => {
   const highlightColor = req.query.highlightColor || '2e2e2e'
   const generalWidth = req.query.generalWidth || '800'
   const highlightConvertedColor = hexToRGBA(highlightColor)
-	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, async (err, resp, body) => {
+	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, (err, resp, body) => {
     if (err) { return console.log(err) }
     var title = body.items[index].title
     var pubDate = body.items[index].pubDate
