@@ -128,12 +128,13 @@ module.exports = (req, res) => {
     var author = body.items[index].author
     var thumbnail = body.items[index].thumbnail
     var description = body.items[index].description
-    const { data: thumbnailRaw } = await axios.get(thumbnail, {
+    axios.get(thumbnail, {
       responseType: 'arraybuffer',
+    }).then((thumbnailRaw) => {
+      const base64Img = Buffer.from(thumbnailRaw).toString('base64')
+      var svgImage = createImage(title, pubDate, link, author, base64Img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth)
+      res.setHeader("Content-Type","image/svg+xml")
+      res.status(200).send(svgImage)
     })
-    const base64Img = Buffer.from(thumbnailRaw).toString('base64')
-    var svgImage = createImage(title, pubDate, link, author, base64Img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth)
-    res.setHeader("Content-Type","image/svg+xml")
-    res.status(200).send(svgImage)
 	})
 }
