@@ -120,7 +120,7 @@ module.exports = (req, res) => {
   const highlightColor = req.query.highlightColor || '2e2e2e'
   const generalWidth = req.query.generalWidth || '800'
   const highlightConvertedColor = hexToRGBA(highlightColor)
-	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, (err, resp, body) => {
+	request('https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@'+username, { json: true }, async (err, resp, body) => {
     if (err) { return console.log(err) }
     var title = body.items[index].title
     var pubDate = body.items[index].pubDate
@@ -128,13 +128,14 @@ module.exports = (req, res) => {
     var author = body.items[index].author
     var thumbnail = body.items[index].thumbnail
     var description = body.items[index].description
-    axios.get(thumbnail, {
-      responseType: 'arraybuffer',
-    }).then((thumbnailRaw) => {
-      const base64Img = Buffer.from(thumbnailRaw).toString('base64')
-      var svgImage = createImage(title, pubDate, link, author, base64Img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth)
-      res.setHeader("Content-Type","image/svg+xml")
-      res.status(200).send(svgImage)
-    })
+    console.log(`Got the thumbnail: ${thumbnail}`)
+    const { data: thumbnailRaw } = await axios.get(thumbnail, {
+        responseType: 'arraybuffer',
+      })
+    console.log(`Received raw: ${thumbnailRaw}`)
+    const base64Img = Buffer.from(thumbnailRaw).toString('base64')
+    var svgImage = createImage(title, pubDate, link, author, base64Img, description, descLength, titleColor, authorColor, descColor, bgColor, dateColor, highlightConvertedColor, borderRadius, borderColor, generalWidth)
+    res.setHeader("Content-Type","image/svg+xml")
+    res.status(200).send(svgImage)
 	})
 }
