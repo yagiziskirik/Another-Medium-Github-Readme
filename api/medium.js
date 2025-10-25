@@ -159,19 +159,12 @@ module.exports = (req, res) => {
       var pubDate = body.items[index].pubDate;
       var link = body.items[index].link;
       var author = body.items[index].author;
-      var thumbnail = body.items[index].thumbnail;
+      // var thumbnail = body.items[index].thumbnail;
       var image = body.feed.image;
       var description = body.items[index].description;
       let base64Img;
 
-      console.log(`Image: ${image}, thumbnail: ${thumbnail}`);
-      if (thumbnail || thumbnail !== "") {
-        const { data: thumbnailRaw } = await axios.get(thumbnail, {
-          responseType: "arraybuffer",
-        });
-        console.log(`Received raw: ${thumbnailRaw}`);
-        base64Img = Buffer.from(thumbnailRaw).toString("base64");
-      } else if (image || image !== "") {
+      if (image || image !== "") {
         const { data: imageRaw } = await axios.get(image, {
           responseType: "arraybuffer",
         });
