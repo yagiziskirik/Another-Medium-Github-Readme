@@ -160,17 +160,17 @@ module.exports = (req, res) => {
       var link = body.items[index].link;
       var author = body.items[index].author;
       // var thumbnail = body.items[index].thumbnail;
-      var image = body.feed.image;
+      // var image = body.feed.image;
       var description = body.items[index].description;
       let base64Img;
 
-      if (image || image !== "") {
-        const { data: imageRaw } = await axios.get(image, {
-          responseType: "arraybuffer",
-        });
-        console.log(`Received raw: ${imageRaw}`);
-        base64Img = Buffer.from(imageRaw).toString("base64");
-      }
+      // if (image || image !== "") {
+      //   const { data: imageRaw } = await axios.get(image, {
+      //     responseType: "arraybuffer",
+      //   });
+      //   console.log(`Received raw: ${imageRaw}`);
+      //   base64Img = Buffer.from(imageRaw).toString("base64");
+      // }
       var svgImage = createImage(
         title,
         pubDate,
