@@ -164,13 +164,13 @@ module.exports = (req, res) => {
       var description = body.items[index].description;
       console.log(`Got the thumbnail: ${thumbnail}`);
       let base64Img;
-      if (thumbnail) {
+      if (thumbnail || thumbnail !== "") {
         const { data: thumbnailRaw } = await axios.get(thumbnail, {
           responseType: "arraybuffer",
         });
         console.log(`Received raw: ${thumbnailRaw}`);
         base64Img = Buffer.from(thumbnailRaw).toString("base64");
-      } else if (image) {
+      } else if (image || image !== "") {
         const { data: imageRaw } = await axios.get(image, {
           responseType: "arraybuffer",
         });
