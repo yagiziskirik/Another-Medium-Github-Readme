@@ -163,6 +163,8 @@ module.exports = (req, res) => {
       var image = body.feed.image;
       var description = body.items[index].description;
       let base64Img;
+
+      console.log(`Image: ${image}, thumbnail: ${thumbnail}`);
       if (thumbnail || thumbnail !== "") {
         const { data: thumbnailRaw } = await axios.get(thumbnail, {
           responseType: "arraybuffer",
