@@ -160,6 +160,7 @@ module.exports = (req, res) => {
       var link = body.items[index].link;
       var author = body.items[index].author;
       var thumbnail = body.items[index].thumbnail;
+      var image = body.items[index].image;
       var description = body.items[index].description;
       console.log(`Got the thumbnail: ${thumbnail}`);
       let base64Img;
@@ -169,6 +170,12 @@ module.exports = (req, res) => {
         });
         console.log(`Received raw: ${thumbnailRaw}`);
         base64Img = Buffer.from(thumbnailRaw).toString("base64");
+      } else if (image) {
+        const { data: imageRaw } = await axios.get(image, {
+          responseType: "arraybuffer",
+        });
+        console.log(`Received raw: ${imageRaw}`);
+        base64Img = Buffer.from(imageRaw).toString("base64");
       }
       var svgImage = createImage(
         title,
