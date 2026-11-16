@@ -1,5 +1,5 @@
 const request = require("request");
-import moment from "moment";
+const moment = require("moment");
 const axios = require("axios");
 
 function createImage(
@@ -23,7 +23,8 @@ function createImage(
   var shortDescription =
     description
       .replace(/<\/?[^>]+(>|$)/g, "")
-      .replace("\n", " ")
+      .replace(/\s+/g, " ")
+      .trim()
       .substr(0, descLength) + "...";
   var momentTime = moment(pubDate).fromNow();
   var svgBase = `
@@ -99,7 +100,15 @@ function createImage(
         </style>
         <div class="outer-container flex">
           <a class="container flex" href="${link}" target="__blank">
-            ${base64ImageLink && `<img style="border-radius: 7px;" src="data:image/png;base64,${base64ImageLink}"/>`}
+            ${
+              base64ImageLink
+                ? `<img style="border-radius: 7px;" src="${
+                    base64ImageLink.startsWith("data:")
+                      ? base64ImageLink
+                      : `data:image/png;base64,${base64ImageLink}`
+                  }"/>`
+                : ""
+            }
             <div class="right">
               <h3>${title}</h3>
               <small>${momentTime}</small>
@@ -133,9 +142,29 @@ function hexToRGBA(hex, alpha) {
   );
 }
 
+function extractPostImage(item) {
+  if (item.thumbnail && !item.thumbnail.includes("stat?event=")) {
+    return item.thumbnail;
+  }
+  const html = item.content || item.description || "";
+  const imgRegex = /<img[^>]+src=["']([^"']+)["']/gi;
+  let match;
+  while ((match = imgRegex.exec(html)) !== null) {
+    const url = match[1];
+    if (
+      url &&
+      !url.includes("medium.com/_/stat") &&
+      !url.includes("stat?event=")
+    ) {
+      return url;
+    }
+  }
+  return null;
+}
+
 module.exports = (req, res) => {
   const username = req.query.username || "medium";
-  const index = req.query.index || "0";
+  const index = parseInt(req.query.index || "0", 10) || 0;
   const descLength = req.query.descLength || "40";
   const borderRadius = req.query.borderRadius || "10";
   const borderColor = req.query.borderColor || "ffffff";
@@ -147,30 +176,43 @@ module.exports = (req, res) => {
   const highlightColor = req.query.highlightColor || "2e2e2e";
   const generalWidth = req.query.generalWidth || "800";
   const highlightConvertedColor = hexToRGBA(highlightColor);
+
   request(
     "https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@" +
       username,
     { json: true },
     async (err, resp, body) => {
-      if (err) {
-        return console.log(err);
+      if (err || !body || !body.items || !body.items[index]) {
+        console.error("Feed fetch error or post not found:", err);
+        return res
+          .status(404)
+          .send("Article not found or failed to fetch feed.");
       }
-      var title = body.items[index].title;
-      var pubDate = body.items[index].pubDate;
-      var link = body.items[index].link;
-      var author = body.items[index].author;
-      // var thumbnail = body.items[index].thumbnail;
-      // var image = body.feed.image;
-      var description = body.items[index].description;
-      let base64Img;
+      const item = body.items[index];
+      var title = item.title;
+      var pubDate = item.pubDate;
+      var link = item.link;
+      var author = item.author;
+      var description = item.description || item.content || "";
+      let base64Img = null;
 
-      // if (image || image !== "") {
-      //   const { data: imageRaw } = await axios.get(image, {
-      //     responseType: "arraybuffer",
-      //   });
-      //   console.log(`Received raw: ${imageRaw}`);
-      //   base64Img = Buffer.from(imageRaw).toString("base64");
-      // }
+      let imageUrl = extractPostImage(item);
+      if (imageUrl) {
+        if (imageUrl.includes("cdn-images-1.medium.com/max/")) {
+          imageUrl = imageUrl.replace(/\/max\/\d+\//, "/max/400/");
+        }
+        try {
+          const { data: imageRaw, headers } = await axios.get(imageUrl, {
+            responseType: "arraybuffer",
+            timeout: 6000,
+          });
+          const contentType = headers["content-type"] || "image/jpeg";
+          base64Img = `data:${contentType};base64,${Buffer.from(imageRaw).toString("base64")}`;
+        } catch (fetchErr) {
+          console.error("Failed to load post image:", fetchErr.message);
+        }
+      }
+
       var svgImage = createImage(
         title,
         pubDate,
